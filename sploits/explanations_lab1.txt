@@ -1,18 +1,54 @@
 #Eva Bernal, 1002252313, e.bernal@mail.utoronto.ca
-#Walton Wang, ##########, x@mail.utoronto.ca
+#Yupeng Wang, 1003272521 yupeng.wang@mail.utoronto.ca
 
 === Target 1 ===
-
-Since buf is copied unsafely in target1, and is stored within the 
-lab_main's frame, the goal was to overflow the buffer to overwrite 
-lab_main's return address. We found the difference between the return 
-address (RA) and the address of buf to be 124. Therefore, we passed 
-in an arg of length 124 into the target; the first 45 bytes contained 
-the shellcode, were followed by \x30 bytes, and terminated with the RA 
-overwrite bytes (buf's start address). Therefore when lab_main terminated, 
-the next instructions that were read was the shellcode that was placed 
-at the start of the buffer. 
+Since buf is copied unsafely in target1, and is stored within the lab_main's frame, the goal was 
+to overflow the buffer to overwrite lab_main's return address. We found the difference between the 
+return address (RA) and the address of buf to be 124. Therefore, we passed in an arg of length 
+124 into the target; the first 45 bytes contained the shellcode, were followed by \x30 bytes, and 
+terminated with the RA overwrite bytes (buf's start address). Therefore when lab_main terminated, 
+the next instructions that were read was the shellcode that was placed at the start of the buffer.
 
 === Target 2 ===
+Target2 declares buf in foo and copies it for longer than its length => foo's RA will be overwritten. 
+The length constraint in foo means that other values must be overwritten too: again the 
+shellcode is placed at the start of the attack string and '\x30' is used as filler. However 
+this time, 264 bytes-in, it is the value of foo’s i var that is overwritten, in order 
+to skip past indices 266 and 267 (giving i=0x0000010b=267 ~ which is immediately incremented). Then len is 
+overwritten with indices 268-270 of arg and with env[0] to give len=0x0000011c = 284, such that env[1] 
+would be copied (as arg[280-283]) into foo's RA.
 
-...
+=== Target 3 ===
+First the attack buffer is set to all 0xFF bytes for debugging, and then 0 - 44 
+bytes of the shellcode is copied. Lastly 68 - 71 are the bytes representing the buffer start, 
+which is where the shellcode sits. This overflows foo’s return address, and shell is started when foo 
+returns.
+
+=== Target 4 ===
+We copy the shellcode, starting at the first byte of the attack. Then at 168th byte, we 
+overfill it with the new length of the buffer, which is set to be 188, which now 
+allows us to copy over the return address at 184-187 bytes. Then we overflow the 172th 
+byte to 175th byte which now contains the new i value, however we set it to be 172 
+as we don’t actually want to modify i. Lastly we overflow the return address. We also configure 
+the env variable so that the args variable is able to pass in the full attack buffer.
+
+=== Target 5 ===
+We carefully design a format string starting at byte 60 that allows us to overfill the return 
+address. We have an addrs variable which contain the addresses of the 4 bytes we wish to overfill, 
+they are ordered by arguments in the format string. The return address is sitting at 0x2021fe768. 
+So we construct our format string in the following order:
+1. Write 32 empty bytes (0x20), written to 0x2021fe76b.
+2. Write 1 byte, (0x21), written to 0x2021fe76a
+3. Write 63 bytes, (0x60), written to 0x2021fe68
+4. Write 153 bytes, (0xfa), written to 0x2021fe69.
+Now the return address is overfilled, one byte at a time.
+
+=== Target 6 ===
+Target 6 required us to modify the shell code because we wish to execute the left branch 
+of tfree. Thus the 5th byte of the shellcode needed to have a least significant bit of 
+value 1. We injected NO-OPs into the shell code starting at byte 3, and we changed the 
+initial jump instruction to jump 0x25 instructions.
+- 60th byte has return address of tfree + 1 as it needs to be cleared in tfree
+- 72th byte is left pointer with value of 0x104ee28, address of p.
+- 76th byte is right pointer with address of the 60th byte of the attack
+
