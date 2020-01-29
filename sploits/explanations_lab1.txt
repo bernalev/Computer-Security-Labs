@@ -1,0 +1,18 @@
+#Eva Bernal, 1002252313, e.bernal@mail.utoronto.ca
+#Walton Wang, ##########, x@mail.utoronto.ca
+
+=== Target 1 ===
+
+Since buf is copied unsafely in target1, and is stored within the 
+lab_main's frame, the goal was to overflow the buffer to overwrite 
+lab_main's return address. We found the difference between the return 
+address (RA) and the address of buf to be 124. Therefore, we passed 
+in an arg of length 124 into the target; the first 45 bytes contained 
+the shellcode, were followed by \x30 bytes, and terminated with the RA 
+overwrite bytes (buf's start address). Therefore when lab_main terminated, 
+the next instructions that were read was the shellcode that was placed 
+at the start of the buffer. 
+
+=== Target 2 ===
+
+...
