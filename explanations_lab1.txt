@@ -1,6 +1,3 @@
-#Eva Bernal, 1002252313, e.bernal@mail.utoronto.ca
-#Yupeng Wang, 1003272521 yupeng.wang@mail.utoronto.ca
-
 === Target 1 ===
 Since buf is copied unsafely in target1, and is stored within the lab_main's frame, the goal was 
 to overflow the buffer to overwrite lab_main's return address. We found the difference between the 
