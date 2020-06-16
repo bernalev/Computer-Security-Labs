@@ -1,6 +1,3 @@
-#Yupeng Wang, 1003272521, yupeng.wang@mail.utoronto.ca
-#Eva Bernal, 1002252313, e.bernal@mail.utoronto.ca
-
 Part 1 Explanation:
 
 - The vulnerability exploited was the lack of input filtering, neither in length nor input type (html, scripts etc.).
@@ -54,6 +51,8 @@ Paste the URL into message, set an enticing title and submit. The message will b
 
 
 Part 4 Explanation:
+
+The message field is exploitable for not input-checking: two image tags could be placed such that their URL source would be executed on page load, the first a request to transfer 5000 units, the second a confirmation of the transfer.
 
 
 Part 5 Explanation:

