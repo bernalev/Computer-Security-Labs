@@ -1,0 +1,1 @@
+For a univeristy course, in collaboration with another student, I wrote exploits in C to target buffer overflow vulnerabilities. The vulnerable programs in target/ are exploited to yield command shells. View explanations.txt and the pdf handout for a more in-depth explanation. 
